@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>テスラ実質価格シミュレーター｜補助金・ローン月々を自動計算【2026】</title>
+<meta name="description" content="テスラ(Model 3 / Model Y)の実質価格を自動計算。CEV補助金・自治体補助・紹介コード¥35,000割引・0%金利の月々支払い・5年維持費まで1画面でわかります。2026年最新データ。">
+<meta property="og:title" content="テスラ実質価格シミュレーター｜補助金・月々を自動計算【2026】">
+<meta property="og:description" content="補助金＋紹介割引＋ローン月々を自動計算。テスラ購入の実質価格が1分でわかります。">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://daisuke529.github.io/tesla-price-calc/">
+<style>
+  :root{ --red:#E82127; --ink:#1a1a1a; --mut:#666; --line:#e8e8e8; --bg:#f4f4f5; }
+  *{ box-sizing:border-box; }
+  body{ margin:0; background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif; line-height:1.7; }
+  .wrap{ max-width:560px; margin:0 auto; padding:16px 14px 40px; }
+  h1{ font-size:22px; font-weight:800; margin:8px 0 2px; letter-spacing:-.01em; }
+  .sub{ color:var(--mut); font-size:13px; margin:0 0 16px; }
+  .card{ background:#fff; border:1px solid var(--line); border-radius:14px; padding:16px; margin:12px 0; }
+  label{ display:block; font-size:13px; font-weight:700; margin:12px 0 4px; }
+  label:first-child{ margin-top:0; }
+  select,input{ width:100%; font-size:16px; padding:11px 12px; border:1px solid #d5d5d5; border-radius:10px; background:#fff; }
+  .row{ display:flex; gap:10px; }
+  .row>div{ flex:1; }
+  .note{ font-size:12px; color:var(--mut); margin:4px 0 0; }
+  .break{ display:flex; justify-content:space-between; align-items:baseline; padding:7px 0; border-bottom:1px dashed var(--line); font-size:14px; }
+  .break .minus{ color:var(--red); }
+  .net{ display:flex; justify-content:space-between; align-items:baseline; padding:12px 0 2px; }
+  .net .label{ font-weight:800; }
+  .net .val{ font-size:30px; font-weight:900; color:var(--red); }
+  .kpi{ display:flex; gap:10px; margin-top:12px; }
+  .kpi>div{ flex:1; background:var(--bg); border-radius:10px; padding:10px 12px; }
+  .kpi .k{ font-size:12px; color:var(--mut); }
+  .kpi .v{ font-size:18px; font-weight:800; margin-top:2px; }
+  .cta{ display:block; background:var(--red); color:#fff; text-decoration:none; font-weight:800; font-size:17px;
+    text-align:center; padding:15px; border-radius:12px; margin:14px 0 6px; }
+  .cta small{ display:block; font-weight:600; font-size:12px; opacity:.92; margin-top:3px; }
+  .disc{ font-size:11px; color:#999; margin-top:14px; }
+  h2{ font-size:16px; font-weight:800; margin:0 0 8px; }
+  .faq dt{ font-weight:700; margin-top:10px; font-size:14px; }
+  .faq dd{ margin:3px 0 0; font-size:13px; color:#444; }
+  .foot{ text-align:center; font-size:11px; color:#aaa; padding-top:16px; }
+  .foot a{ color:#888; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>テスラ実質価格シミュレーター</h1>
+  <p class="sub">補助金・紹介割引・ローン月々・5年維持費を自動計算【2026年最新】</p>
+
+  <div class="card">
+    <label for="model">車種・グレード</label>
+    <select id="model"></select>
+
+    <label for="pref">お住まいの地域</label>
+    <select id="pref"></select>
+    <p class="note" id="prefNote"></p>
+
+    <div class="row">
+      <div>
+        <label for="down">頭金（円）</label>
+        <input id="down" type="number" inputmode="numeric" value="0" min="0" step="100000">
+      </div>
+      <div>
+        <label for="years">ローン年数</label>
+        <select id="years"></select>
+      </div>
+    </div>
+
+    <label for="km">年間走行距離（km）</label>
+    <input id="km" type="number" inputmode="numeric" value="10000" min="0" step="1000">
+  </div>
+
+  <div class="card">
+    <div class="break"><span>車両本体価格</span><span id="bBody">—</span></div>
+    <div class="break"><span>CEV補助金（国）</span><span class="minus" id="bCev">—</span></div>
+    <div class="break"><span id="bPrefLabel">自治体補助</span><span class="minus" id="bPref">—</span></div>
+    <div class="break"><span>紹介コード割引</span><span class="minus" id="bRef">—</span></div>
+    <div class="net"><span class="label">実質価格</span><span class="val" id="bNet">—</span></div>
+    <div class="kpi">
+      <div><div class="k">月々（0%金利）</div><div class="v" id="bMonthly">—</div></div>
+      <div><div class="k">5年の電気代</div><div class="v" id="bElec">—</div></div>
+    </div>
+    <div class="kpi">
+      <div><div class="k">ガソリン車比（5年）</div><div class="v" id="bSave">—</div></div>
+      <div><div class="k">5年総コスト</div><div class="v" id="bTco">—</div></div>
+    </div>
+  </div>
+
+  <a class="cta" id="cta" href="#">紹介コードで¥35,000割引を適用して注文<small>Tesla公式（ts.la）へ・注文時に適用、後付け不可</small></a>
+
+  <div class="card faq">
+    <h2>よくある質問</h2>
+    <dl>
+      <dt>テスラの実質価格はどう決まる？</dt>
+      <dd>車両本体から CEV補助金（国）・自治体補助・紹介コード割引を引いた額が実質負担の目安です。</dd>
+      <dt>紹介コードでいくら安くなる？</dt>
+      <dd>新車 Model 3 / Model Y で¥35,000割引。注文時に紹介リンク経由で適用が必要（後付け不可）。</dd>
+      <dt>補助金は誰でも満額もらえる？</dt>
+      <dd>国のCEVは条件・予算枠があり、保有義務期間（乗用車4年）等の条件付き。自治体分は地域で大きく異なります。最新は各窓口で確認を。</dd>
+    </dl>
+  </div>
+
+  <p class="disc" id="disc"></p>
+  <div class="foot">
+    個人オーナーによる紹介（advocacy）ツールです・<a href="https://x.com/daisuketesla">@daisuketesla</a>
+  </div>
+</div>
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"テスラの実質価格はどう決まりますか？","acceptedAnswer":{"@type":"Answer","text":"車両本体価格からCEV補助金（国）・自治体補助・紹介コード割引を差し引いた額が実質負担の目安です。"}},
+{"@type":"Question","name":"テスラの紹介コードでいくら安くなりますか？","acceptedAnswer":{"@type":"Answer","text":"新車のModel 3 / Model Yで¥35,000割引。注文時に紹介リンク経由で適用が必要で、後付けはできません。"}},
+{"@type":"Question","name":"テスラの補助金は誰でも満額もらえますか？","acceptedAnswer":{"@type":"Answer","text":"国のCEV補助金は条件・予算枠があり保有義務期間などの条件付きです。自治体補助は地域で大きく異なります。"}}
+]}
+</script>
+
+<script src="data.js"></script>
+<script>
+  const yen = n => "¥" + Math.round(n).toLocaleString("ja-JP");
+  const $ = id => document.getElementById(id);
+
+  // セレクト初期化
+  DATA.models.forEach((m,i)=>{ const o=document.createElement("option"); o.value=i; o.textContent=m.name; $("model").appendChild(o); });
+  DATA.prefectures.forEach((p,i)=>{ const o=document.createElement("option"); o.value=i; o.textContent=p.name; $("pref").appendChild(o); });
+  DATA.finance.years.forEach(y=>{ const o=document.createElement("option"); o.value=y; o.textContent=y+"年"; if(y===5)o.selected=true; $("years").appendChild(o); });
+
+  function calc(){
+    const m = DATA.models[+$("model").value];
+    const p = DATA.prefectures[+$("pref").value];
+    const down = Math.max(0, +$("down").value || 0);
+    const years = +$("years").value || 5;
+    const km = Math.max(0, +$("km").value || 0);
+
+    const exclTax = m.price / 1.1;
+    const cev = exclTax >= DATA.cev.high_value_threshold_excl_tax
+      ? Math.round(DATA.cev.max * DATA.cev.high_value_factor) : DATA.cev.max;
+    const ref = DATA.referral.discount;
+    const net = Math.max(0, m.price - cev - p.subsidy - ref);
+
+    const loan = Math.max(0, net - down);
+    const months = years * 12;
+    const apr = DATA.finance.apr;
+    let monthly;
+    if (apr === 0) { monthly = loan / months; }
+    else { const r = apr/12/100; monthly = loan * r / (1 - Math.pow(1+r, -months)); }
+
+    const kwhYear = km / m.km_per_kwh;
+    const elecYear = kwhYear * DATA.running.yen_per_kwh;
+    const gasYear = (km / DATA.running.gas_km_per_l) * DATA.running.yen_per_liter;
+    const save5 = (gasYear - elecYear) * 5;
+    const tco5 = net + elecYear * 5;
+
+    $("bBody").textContent = yen(m.price);
+    $("bCev").textContent = "−" + yen(cev);
+    $("bPrefLabel").textContent = "自治体補助（" + p.name + "）";
+    $("bPref").textContent = "−" + yen(p.subsidy);
+    $("bRef").textContent = "−" + yen(ref);
+    $("bNet").textContent = yen(net);
+    $("bMonthly").textContent = yen(monthly) + "/月";
+    $("bElec").textContent = yen(elecYear * 5);
+    $("bSave").textContent = (save5 >= 0 ? "−" : "+") + yen(Math.abs(save5));
+    $("bTco").textContent = yen(tco5);
+    $("prefNote").textContent = p.note ? "※ " + p.note : "";
+  }
+
+  $("cta").href = DATA.referral.link;
+  $("disc").textContent =
+    "※本ツールの金額は概算です。価格・補助金・金利は変動し、地域や個別条件で実額は異なります。"
+    + "実際の金額はTesla公式の見積もりと各自治体・窓口で必ずご確認ください。データ最終更新: "
+    + DATA.last_updated + "。";
+
+  ["model","pref","down","years","km"].forEach(id => $(id).addEventListener("input", calc));
+  calc();
+</script>
+</body>
+</html>
