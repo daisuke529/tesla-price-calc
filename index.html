@@ -132,7 +132,8 @@
 
   function calc(){
     const m = DATA.models[+$("model").value];
-    const p = DATA.prefectures[+$("pref").value];
+    const pi = +$("pref").value;
+    const p = DATA.prefectures[pi];
     const down = Math.max(0, +$("down").value || 0);
     const years = +$("years").value || 5;
     const km = Math.max(0, +$("km").value || 0);
@@ -158,7 +159,7 @@
 
     $("bBody").textContent = yen(m.price);
     $("bCev").textContent = "−" + yen(cev);
-    $("bPrefLabel").textContent = "自治体補助（" + p.name + "）";
+    $("bPrefLabel").textContent = pi === 0 ? "自治体補助" : "自治体補助（" + p.name + "）";
     $("bPref").textContent = "−" + yen(p.subsidy);
     $("bRef").textContent = "−" + yen(ref);
     $("bNet").textContent = yen(net);
