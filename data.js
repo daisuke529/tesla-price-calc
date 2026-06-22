@@ -28,6 +28,15 @@ const DATA = {
     gas: { tax_5y: 192500, shaken_5y: 155000, maint_5y: 75000 }   // 自動車税¥36,000×5+重量税¥12,500／車検2回／メンテ(オイル等)
   },
 
+  // スーパーチャージャー無料キャンペーン（★終了したら active:false に。2026/6/30購入・7/31納車まで）
+  sc_campaign: {
+    active: true,
+    years: 3,
+    models: "Model 3 / Model Y（Y L除外）",
+    purchase_deadline: "2026/6/30",
+    delivery_deadline: "2026/7/31"
+  },
+
   // 車両（価格は変動・一部は推定。最新はTesla公式で要確認）
   models: [
     { id: "m3rwd", name: "Model 3 RWD",               price: 5313000, km_per_kwh: 6.5 },

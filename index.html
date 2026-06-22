@@ -21,6 +21,7 @@
   label{ display:block; font-size:13px; font-weight:700; margin:12px 0 4px; }
   label:first-child{ margin-top:0; }
   select,input{ width:100%; font-size:16px; padding:11px 12px; border:1px solid #d5d5d5; border-radius:10px; background:#fff; }
+  input[type=range]{ padding:0; border:none; background:transparent; height:30px; accent-color:var(--red); }
   .row{ display:flex; gap:10px; }
   .row>div{ flex:1; }
   .note{ font-size:12px; color:var(--mut); margin:4px 0 0; }
@@ -35,6 +36,7 @@
   .cta{ display:block; background:var(--red); color:#fff; text-decoration:none; font-weight:800; font-size:17px;
     text-align:center; padding:15px; border-radius:12px; margin:14px 0 6px; }
   .cta small{ display:block; font-weight:600; font-size:12px; opacity:.92; margin-top:3px; }
+  .campaign{ background:#fff3f3; border:1px solid #f3c0c0; color:#a32d2d; border-radius:12px; padding:11px 14px; margin:12px 0; font-size:13px; font-weight:700; line-height:1.6; }
   .disc{ font-size:11px; color:#999; margin-top:14px; }
   h2{ font-size:16px; font-weight:800; margin:0 0 6px; }
   .cmp{ width:100%; border-collapse:collapse; margin-top:8px; font-size:14px; }
@@ -56,6 +58,7 @@
 <div class="wrap">
   <h1>テスラ実質価格シミュレーター</h1>
   <p class="sub">補助金・紹介割引・ローン月々・5年維持費を自動計算【2026年最新】</p>
+  <div id="scCampaign" class="campaign"></div>
 
   <div class="card">
     <label for="model">車種・グレード</label>
@@ -80,8 +83,9 @@
     <input id="apr" type="number" inputmode="decimal" value="0" min="0" max="15" step="0.1">
     <p class="note">0%金利は最長5年（Teslaキャンペーン）。6年以上は通常のマイカーローン金利（例: 2〜5%）を入れて試算してください。</p>
 
-    <label for="km">年間走行距離（km）</label>
-    <input id="km" type="number" inputmode="numeric" value="10000" min="0" step="1000">
+    <label for="km">年間走行距離：<span id="kmOut">10,000</span> km</label>
+    <input id="km" type="range" value="10000" min="2000" max="30000" step="1000">
+    <p class="note">スライダーを動かすと燃料費・維持費が変わります（本体価格・税金・車検は走行距離では変わりません）。</p>
   </div>
 
   <div class="card">
@@ -204,6 +208,7 @@
     $("prefNote").textContent = p.note ? "※ " + p.note : "";
 
     // 維持費くらべ
+    $("kmOut").textContent = km.toLocaleString();
     $("cmpNote").textContent = "年間走行" + km.toLocaleString() + "km想定／燃料合計は自宅充電(標準)前提。税金・車検・メンテは概算。";
     $("cFuelEv").textContent = yen(fuelHome) + "/年";
     $("cFuelGas").textContent = yen(fuelGas) + "/年";
@@ -223,7 +228,10 @@
     $("f3gas").textContent = yen(fuelGas) + "/年";
     $("f3home").textContent = yen(fuelHome) + "/年";
     $("f3night").textContent = yen(fuelNight) + "/年";
-    $("f3sc").textContent = yen(fuelSC) + "/年";
+    const scC = DATA.sc_campaign;
+    $("f3sc").textContent = (scC && scC.active)
+      ? "今だけ¥0/年（" + scC.years + "年無料・通常" + yen(fuelSC) + "）"
+      : yen(fuelSC) + "/年";
   }
 
   $("cta").href = DATA.referral.link;
@@ -231,6 +239,14 @@
     "※本ツールの金額は概算です。価格・補助金・金利・燃料費・税金・車検費は変動し、地域や個別条件で実額は異なります。"
     + "実際の金額はTesla公式の見積もりと各自治体・窓口で必ずご確認ください。データ最終更新: "
     + DATA.last_updated + "。";
+
+  (function(){
+    const sc = DATA.sc_campaign, el = $("scCampaign");
+    if (sc && sc.active) {
+      el.textContent = "【期間限定】" + sc.models + " はスーパーチャージャー" + sc.years
+        + "年間無料（" + sc.purchase_deadline + "購入・" + sc.delivery_deadline + "納車まで）";
+    } else { el.style.display = "none"; }
+  })();
 
   ["model","pref","down","years","apr","km"].forEach(id => $(id).addEventListener("input", calc));
   calc();
