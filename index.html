@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>テスラ実質価格シミュレーター｜補助金・ローン月々を自動計算【2026】</title>
-<meta name="description" content="テスラ(Model 3 / Model Y)の実質価格を自動計算。CEV補助金・自治体補助・紹介コード¥35,000割引・0%金利の月々支払い・5年維持費まで1画面でわかります。2026年最新データ。">
-<meta property="og:title" content="テスラ実質価格シミュレーター｜補助金・月々を自動計算【2026】">
-<meta property="og:description" content="補助金＋紹介割引＋ローン月々を自動計算。テスラ購入の実質価格が1分でわかります。">
+<meta name="description" content="テスラ(Model 3 / Model Y)の実質価格を自動計算。CEV補助金・自治体補助・紹介コード¥35,000割引・0%金利の月々支払い・5年維持費(燃料/メンテ/税金/車検)まで1画面でわかります。2026年最新データ。">
+<meta property="og:title" content="テスラ実質価格シミュレーター｜補助金・月々・維持費を自動計算【2026】">
+<meta property="og:description" content="補助金＋紹介割引＋ローン月々＋5年維持費(燃料/税金/車検)を自動計算。テスラ購入の実質価格が1分でわかります。">
 <meta property="og:type" content="website">
 <link rel="canonical" href="https://daisuke529.github.io/tesla-price-calc/">
 <style>
@@ -29,15 +29,23 @@
   .net{ display:flex; justify-content:space-between; align-items:baseline; padding:12px 0 2px; }
   .net .label{ font-weight:800; }
   .net .val{ font-size:30px; font-weight:900; color:var(--red); }
-  .kpi{ display:flex; gap:10px; margin-top:12px; }
-  .kpi>div{ flex:1; background:var(--bg); border-radius:10px; padding:10px 12px; }
-  .kpi .k{ font-size:12px; color:var(--mut); }
-  .kpi .v{ font-size:18px; font-weight:800; margin-top:2px; }
+  .kpi{ background:var(--bg); border-radius:10px; padding:10px 12px; margin-top:12px; display:flex; justify-content:space-between; align-items:baseline; }
+  .kpi .k{ font-size:13px; color:var(--mut); }
+  .kpi .v{ font-size:20px; font-weight:800; }
   .cta{ display:block; background:var(--red); color:#fff; text-decoration:none; font-weight:800; font-size:17px;
     text-align:center; padding:15px; border-radius:12px; margin:14px 0 6px; }
   .cta small{ display:block; font-weight:600; font-size:12px; opacity:.92; margin-top:3px; }
   .disc{ font-size:11px; color:#999; margin-top:14px; }
-  h2{ font-size:16px; font-weight:800; margin:0 0 8px; }
+  h2{ font-size:16px; font-weight:800; margin:0 0 6px; }
+  .cmp{ width:100%; border-collapse:collapse; margin-top:8px; font-size:14px; }
+  .cmp th,.cmp td{ padding:8px 6px; border-bottom:1px solid var(--line); text-align:right; }
+  .cmp th:first-child,.cmp td:first-child{ text-align:left; color:var(--mut); }
+  .cmp th{ font-weight:700; font-size:13px; }
+  .cmp .total td{ font-weight:800; border-top:2px solid #ddd; border-bottom:none; padding-top:10px; }
+  .cmp .total td.ev{ color:var(--red); }
+  .save{ text-align:center; background:#fff3f3; color:var(--red); font-weight:800; border-radius:10px; padding:11px; margin-top:10px; font-size:15px; }
+  .fuel3{ margin-top:16px; }
+  .fuel3 .h{ font-size:13px; font-weight:700; margin-bottom:2px; }
   .faq dt{ font-weight:700; margin-top:10px; font-size:14px; }
   .faq dd{ margin:3px 0 0; font-size:13px; color:#444; }
   .foot{ text-align:center; font-size:11px; color:#aaa; padding-top:16px; }
@@ -82,13 +90,28 @@
     <div class="break"><span id="bPrefLabel">自治体補助</span><span class="minus" id="bPref">—</span></div>
     <div class="break"><span>紹介コード割引</span><span class="minus" id="bRef">—</span></div>
     <div class="net"><span class="label">実質価格</span><span class="val" id="bNet">—</span></div>
-    <div class="kpi">
-      <div><div class="k" id="kMonthly">月々</div><div class="v" id="bMonthly">—</div></div>
-      <div><div class="k">5年の電気代</div><div class="v" id="bElec">—</div></div>
-    </div>
-    <div class="kpi">
-      <div><div class="k">ガソリン車比（5年）</div><div class="v" id="bSave">—</div></div>
-      <div><div class="k">5年総コスト</div><div class="v" id="bTco">—</div></div>
+    <div class="kpi"><span class="k" id="kMonthly">月々</span><span class="v" id="bMonthly">—</span></div>
+  </div>
+
+  <div class="card">
+    <h2>5年間の維持費くらべ（概算）</h2>
+    <p class="note" id="cmpNote"></p>
+    <table class="cmp">
+      <tr><th></th><th>テスラ</th><th>ガソリン車(2.0L)</th></tr>
+      <tr><td>燃料・充電（年）</td><td id="cFuelEv">—</td><td id="cFuelGas">—</td></tr>
+      <tr><td>メンテ（5年）</td><td id="cMaintEv">—</td><td id="cMaintGas">—</td></tr>
+      <tr><td>税金（5年）</td><td id="cTaxEv">—</td><td id="cTaxGas">—</td></tr>
+      <tr><td>車検（5年・2回）</td><td id="cShakenEv">—</td><td id="cShakenGas">—</td></tr>
+      <tr class="total"><td>5年維持費 合計</td><td class="ev" id="cTotalEv">—</td><td id="cTotalGas">—</td></tr>
+    </table>
+    <div class="save" id="cSave">—</div>
+
+    <div class="fuel3">
+      <div class="h">充電・給油 方法別（年間・同じ走行距離で比較）</div>
+      <div class="break"><span>ガソリン車（2.0L）</span><span id="f3gas">—</span></div>
+      <div class="break"><span>テスラ・自宅充電（標準 ¥31/kWh）</span><span id="f3home">—</span></div>
+      <div class="break"><span>テスラ・自宅充電（夜間 ¥16/kWh）</span><span id="f3night">—</span></div>
+      <div class="break"><span>テスラ・スーパーチャージャー（¥40/kWh換算）</span><span id="f3sc">—</span></div>
     </div>
   </div>
 
@@ -99,6 +122,8 @@
     <dl>
       <dt>テスラの実質価格はどう決まる？</dt>
       <dd>車両本体から CEV補助金（国）・自治体補助・紹介コード割引を引いた額が実質負担の目安です。</dd>
+      <dt>テスラとガソリン車、維持費はどっちが安い？</dt>
+      <dd>燃料費（電気は自宅充電でガソリンの約1/4）・メンテ（オイル交換不要）・税金（重量税免除・環境性能割非課税）・車検で、テスラが有利になりやすいです。本ツールで5年の概算を比較できます。</dd>
       <dt>紹介コードでいくら安くなる？</dt>
       <dd>新車 Model 3 / Model Y で¥35,000割引。注文時に紹介リンク経由で適用が必要（後付け不可）。</dd>
       <dt>補助金は誰でも満額もらえる？</dt>
@@ -115,6 +140,7 @@
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
 {"@type":"Question","name":"テスラの実質価格はどう決まりますか？","acceptedAnswer":{"@type":"Answer","text":"車両本体価格からCEV補助金（国）・自治体補助・紹介コード割引を差し引いた額が実質負担の目安です。"}},
+{"@type":"Question","name":"テスラとガソリン車では維持費はどちらが安いですか？","acceptedAnswer":{"@type":"Answer","text":"燃料費(電気は自宅充電でガソリンの約1/4)・メンテ(オイル交換不要)・税金(重量税免除・環境性能割非課税)・車検で、テスラが有利になりやすいです。"}},
 {"@type":"Question","name":"テスラの紹介コードでいくら安くなりますか？","acceptedAnswer":{"@type":"Answer","text":"新車のModel 3 / Model Yで¥35,000割引。注文時に紹介リンク経由で適用が必要で、後付けはできません。"}},
 {"@type":"Question","name":"テスラの補助金は誰でも満額もらえますか？","acceptedAnswer":{"@type":"Answer","text":"国のCEV補助金は条件・予算枠があり保有義務期間などの条件付きです。自治体補助は地域で大きく異なります。"}}
 ]}
@@ -125,7 +151,6 @@
   const yen = n => "¥" + Math.round(n).toLocaleString("ja-JP");
   const $ = id => document.getElementById(id);
 
-  // セレクト初期化
   DATA.models.forEach((m,i)=>{ const o=document.createElement("option"); o.value=i; o.textContent=m.name; $("model").appendChild(o); });
   DATA.prefectures.forEach((p,i)=>{ const o=document.createElement("option"); o.value=i; o.textContent=p.name; $("pref").appendChild(o); });
   DATA.finance.years.forEach(y=>{ const o=document.createElement("option"); o.value=y; o.textContent=y+"年"; if(y===5)o.selected=true; $("years").appendChild(o); });
@@ -136,27 +161,38 @@
     const p = DATA.prefectures[pi];
     const down = Math.max(0, +$("down").value || 0);
     const years = +$("years").value || 5;
+    const apr = Math.max(0, +$("apr").value || 0);
     const km = Math.max(0, +$("km").value || 0);
 
+    // 実質価格
     const exclTax = m.price / 1.1;
     const cev = exclTax >= DATA.cev.high_value_threshold_excl_tax
       ? Math.round(DATA.cev.max * DATA.cev.high_value_factor) : DATA.cev.max;
     const ref = DATA.referral.discount;
     const net = Math.max(0, m.price - cev - p.subsidy - ref);
 
+    // 月々
     const loan = Math.max(0, net - down);
     const months = years * 12;
-    const apr = Math.max(0, +$("apr").value || 0);
     let monthly;
     if (apr === 0) { monthly = loan / months; }
     else { const r = apr/12/100; monthly = loan * r / (1 - Math.pow(1+r, -months)); }
 
+    // 燃料・充電（年間・同じ走行距離）
+    const r = DATA.running;
     const kwhYear = km / m.km_per_kwh;
-    const elecYear = kwhYear * DATA.running.yen_per_kwh;
-    const gasYear = (km / DATA.running.gas_km_per_l) * DATA.running.yen_per_liter;
-    const save5 = (gasYear - elecYear) * 5;
-    const tco5 = net + elecYear * 5;
+    const fuelGas   = (km / r.gas_km_per_l) * r.yen_per_liter;
+    const fuelHome  = kwhYear * r.yen_per_kwh;
+    const fuelNight = kwhYear * r.yen_per_kwh_night;
+    const fuelSC    = kwhYear * r.yen_per_kwh_sc;
 
+    // 5年維持費（燃料は自宅標準充電前提）
+    const ev = DATA.ownership.ev, gas = DATA.ownership.gas;
+    const evTotal5  = fuelHome*5 + ev.maint_5y  + ev.tax_5y  + ev.shaken_5y;
+    const gasTotal5 = fuelGas*5  + gas.maint_5y + gas.tax_5y + gas.shaken_5y;
+    const save5 = gasTotal5 - evTotal5;
+
+    // 実質価格パネル
     $("bBody").textContent = yen(m.price);
     $("bCev").textContent = "−" + yen(cev);
     $("bPrefLabel").textContent = pi === 0 ? "自治体補助" : "自治体補助（" + p.name + "）";
@@ -165,15 +201,34 @@
     $("bNet").textContent = yen(net);
     $("kMonthly").textContent = "月々（金利" + apr + "%・" + years + "年）";
     $("bMonthly").textContent = yen(monthly) + "/月";
-    $("bElec").textContent = yen(elecYear * 5);
-    $("bSave").textContent = (save5 >= 0 ? "−" : "+") + yen(Math.abs(save5));
-    $("bTco").textContent = yen(tco5);
     $("prefNote").textContent = p.note ? "※ " + p.note : "";
+
+    // 維持費くらべ
+    $("cmpNote").textContent = "年間走行" + km.toLocaleString() + "km想定／燃料合計は自宅充電(標準)前提。税金・車検・メンテは概算。";
+    $("cFuelEv").textContent = yen(fuelHome) + "/年";
+    $("cFuelGas").textContent = yen(fuelGas) + "/年";
+    $("cMaintEv").textContent = yen(ev.maint_5y);
+    $("cMaintGas").textContent = yen(gas.maint_5y);
+    $("cTaxEv").textContent = yen(ev.tax_5y);
+    $("cTaxGas").textContent = yen(gas.tax_5y);
+    $("cShakenEv").textContent = yen(ev.shaken_5y);
+    $("cShakenGas").textContent = yen(gas.shaken_5y);
+    $("cTotalEv").textContent = yen(evTotal5);
+    $("cTotalGas").textContent = yen(gasTotal5);
+    $("cSave").textContent = save5 >= 0
+      ? "5年でテスラが約 " + yen(save5) + " お得（維持費）"
+      : "5年でガソリン車が約 " + yen(-save5) + " 安い（維持費）";
+
+    // 充電・給油 方法別（年）
+    $("f3gas").textContent = yen(fuelGas) + "/年";
+    $("f3home").textContent = yen(fuelHome) + "/年";
+    $("f3night").textContent = yen(fuelNight) + "/年";
+    $("f3sc").textContent = yen(fuelSC) + "/年";
   }
 
   $("cta").href = DATA.referral.link;
   $("disc").textContent =
-    "※本ツールの金額は概算です。価格・補助金・金利は変動し、地域や個別条件で実額は異なります。"
+    "※本ツールの金額は概算です。価格・補助金・金利・燃料費・税金・車検費は変動し、地域や個別条件で実額は異なります。"
     + "実際の金額はTesla公式の見積もりと各自治体・窓口で必ずご確認ください。データ最終更新: "
     + DATA.last_updated + "。";
 
