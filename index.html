@@ -68,6 +68,10 @@
       </div>
     </div>
 
+    <label for="apr">ローン金利（年率 %）</label>
+    <input id="apr" type="number" inputmode="decimal" value="0" min="0" max="15" step="0.1">
+    <p class="note">0%金利は最長5年（Teslaキャンペーン）。6年以上は通常のマイカーローン金利（例: 2〜5%）を入れて試算してください。</p>
+
     <label for="km">年間走行距離（km）</label>
     <input id="km" type="number" inputmode="numeric" value="10000" min="0" step="1000">
   </div>
@@ -141,7 +145,7 @@
 
     const loan = Math.max(0, net - down);
     const months = years * 12;
-    const apr = DATA.finance.apr;
+    const apr = Math.max(0, +$("apr").value || 0);
     let monthly;
     if (apr === 0) { monthly = loan / months; }
     else { const r = apr/12/100; monthly = loan * r / (1 - Math.pow(1+r, -months)); }
@@ -171,7 +175,7 @@
     + "実際の金額はTesla公式の見積もりと各自治体・窓口で必ずご確認ください。データ最終更新: "
     + DATA.last_updated + "。";
 
-  ["model","pref","down","years","km"].forEach(id => $(id).addEventListener("input", calc));
+  ["model","pref","down","years","apr","km"].forEach(id => $(id).addEventListener("input", calc));
   calc();
 </script>
 </body>
