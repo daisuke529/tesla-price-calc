@@ -83,7 +83,7 @@
     <div class="break"><span>紹介コード割引</span><span class="minus" id="bRef">—</span></div>
     <div class="net"><span class="label">実質価格</span><span class="val" id="bNet">—</span></div>
     <div class="kpi">
-      <div><div class="k">月々（0%金利）</div><div class="v" id="bMonthly">—</div></div>
+      <div><div class="k" id="kMonthly">月々</div><div class="v" id="bMonthly">—</div></div>
       <div><div class="k">5年の電気代</div><div class="v" id="bElec">—</div></div>
     </div>
     <div class="kpi">
@@ -163,6 +163,7 @@
     $("bPref").textContent = "−" + yen(p.subsidy);
     $("bRef").textContent = "−" + yen(ref);
     $("bNet").textContent = yen(net);
+    $("kMonthly").textContent = "月々（金利" + apr + "%・" + years + "年）";
     $("bMonthly").textContent = yen(monthly) + "/月";
     $("bElec").textContent = yen(elecYear * 5);
     $("bSave").textContent = (save5 >= 0 ? "−" : "+") + yen(Math.abs(save5));
