@@ -2,7 +2,7 @@
 // ★保守はこのファイルだけ編集すればOK。価格・補助金は変動するので last_updated も更新する。
 // 出典: Tesla公式 / 次世代自動車振興センター(CEV) / 各自治体 / 各種メディア（2026-04〜06時点）
 const DATA = {
-  last_updated: "2026-06-22",
+  last_updated: "2026-07-13",
 
   // 紹介プログラム（新車Model 3/Yで割引・注文時に適用・後付け不可）
   referral: { discount: 35000, link: "https://ts.la/daisuke206564" },
@@ -28,9 +28,9 @@ const DATA = {
     gas: { tax_5y: 192500, shaken_5y: 155000, maint_5y: 75000 }   // 自動車税¥36,000×5+重量税¥12,500／車検2回／メンテ(オイル等)
   },
 
-  // スーパーチャージャー無料キャンペーン（★終了したら active:false に。2026/6/30購入・7/31納車まで）
+  // スーパーチャージャー無料キャンペーン（★2026/6/30注文期限で終了→OFF。延長は納車期限7/31のみ＝新規注文は対象外。次回開始時に active:true へ）
   sc_campaign: {
-    active: true,
+    active: false,
     years: 3,
     models: "Model 3 / Model Y（Y L除外）",
     purchase_deadline: "2026/6/30",
@@ -42,7 +42,7 @@ const DATA = {
     { id: "m3rwd", name: "Model 3 RWD",               price: 5313000, km_per_kwh: 6.5 },
     { id: "m3lr",  name: "Model 3 Long Range AWD",     price: 6200000, km_per_kwh: 6.4 },
     { id: "m3p",   name: "Model 3 Performance",        price: 7259000, km_per_kwh: 6.0 },
-    { id: "myrwd", name: "Model Y RWD",                price: 5870000, km_per_kwh: 6.3 },
+    { id: "myrwd", name: "Model Y RWD",                price: 5587000, km_per_kwh: 6.3 },
     { id: "mylr",  name: "Model Y Long Range AWD",     price: 6476000, km_per_kwh: 6.2 },
     { id: "myp",   name: "Model Y Performance",        price: 6979000, km_per_kwh: 5.9 },
     { id: "myl",   name: "Model Y L (3列6人乗り)",      price: 7490000, km_per_kwh: 5.8 }
@@ -64,7 +64,7 @@ const DATA = {
     { name: "群馬県", subsidy: 0, note: "県補助はV2H+大容量等の条件が厳しく予算早期終了の例。実質国のみ・要確認" },
     { name: "埼玉県", subsidy: 0, note: "県補助は2026年度廃止（国のみ）。さいたま市EV¥5万等・要確認" },
     { name: "千葉県", subsidy: 0, note: "県独自なし（国のみ）。千葉市EV¥10〜15万(太陽光併設必須)等・要確認" },
-    { name: "東京都", subsidy: 600000, note: "Teslaは基本¥60万(基本10万＋メーカー上乗せ50万)。太陽光/V2H/再エネ電力契約等で最大¥100万。【増額予定】2026年度補正でEV最大¥130万へ拡充を審議中（2026-06-24以降に正式発表予定）" },
+    { name: "東京都", subsidy: 700000, note: "【2026-06-24増額決定】Teslaは基本¥70万（2026/7/1以降の初度登録が対象・従来¥40万から拡充）。太陽光＋V2H等の条件で最大¥110万。国CEV¥127万と併用可（計¥197万〜最大¥237万）" },
     { name: "神奈川県", subsidy: 0, note: "県独自なし（国のみ）。藤沢市EV¥5万等、市により補助あり・要確認" },
     { name: "新潟県", subsidy: 0, note: "県独自なし（国のみ）。市町村による・要確認" },
     { name: "富山県", subsidy: 50000, note: "県¥5万(定額・国併用可)。受付期間/予算枠に注意・要確認" },
