@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>テスラ実質価格シミュレーター｜補助金・ローン月々を自動計算【2026】</title>
-<meta name="description" content="テスラ(Model 3 / Model Y)の実質価格を自動計算。CEV補助金・自治体補助・紹介コード¥35,000割引・0%金利の月々支払い・5年維持費(燃料/メンテ/税金/車検)まで1画面でわかります。2026年最新データ。">
+<meta name="description" content="テスラ(Model 3 / Model Y)の実質価格を自動計算。CEV補助金・自治体補助・紹介コード¥35,000割引・ローン月々の支払い・5年維持費(燃料/メンテ/税金/車検)まで1画面でわかります。2026年最新データ。">
 <meta property="og:title" content="テスラ実質価格シミュレーター｜補助金・月々・維持費を自動計算【2026】">
 <meta property="og:description" content="補助金＋紹介割引＋ローン月々＋5年維持費(燃料/税金/車検)を自動計算。テスラ購入の実質価格が1分でわかります。">
 <meta property="og:type" content="website">
@@ -99,7 +99,7 @@
 
     <label for="apr">ローン金利（年率 %）</label>
     <input id="apr" type="number" inputmode="decimal" value="0" min="0" max="15" step="0.1">
-    <p class="note">0%金利は最長5年（Teslaキャンペーン）。6年以上は通常のマイカーローン金利（例: 2〜5%）を入れて試算してください。</p>
+    <p class="note">金利は時期・審査で変わります（過去には0%キャンペーンあり）。実際に提示される金利をここに入れて試算してください（例: 0〜5%）。</p>
 
     <label for="km">年間走行距離：<span id="kmOut">10,000</span> km</label>
     <input id="km" type="range" value="10000" min="2000" max="30000" step="1000">
@@ -259,10 +259,12 @@
     + DATA.last_updated + "。";
 
   (function(){
-    const sc = DATA.sc_campaign, el = $("scCampaign");
+    const sc = DATA.sc_campaign, nt = DATA.notice, el = $("scCampaign");
     if (sc && sc.active) {
       el.textContent = "【期間限定】" + sc.models + " はスーパーチャージャー" + sc.years
         + "年間無料（" + sc.purchase_deadline + "購入・" + sc.delivery_deadline + "納車まで）";
+    } else if (nt && nt.active) {
+      el.textContent = nt.text;
     } else { el.style.display = "none"; }
   })();
 

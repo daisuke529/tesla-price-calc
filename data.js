@@ -2,13 +2,20 @@
 // ★保守はこのファイルだけ編集すればOK。価格・補助金は変動するので last_updated も更新する。
 // 出典: Tesla公式 / 次世代自動車振興センター(CEV) / 各自治体 / 各種メディア（2026-04〜06時点）
 const DATA = {
-  last_updated: "2026-07-13",
+  last_updated: "2026-09-14",
 
   // 紹介プログラム（新車Model 3/Yで割引・注文時に適用・後付け不可）
   referral: { discount: 35000, link: "https://ts.la/daisuke206564" },
 
-  // 国のCEV補助金（2026年度）。Teslaは¥127万で確定。税抜840万円以上は×0.8減額だがTesla各車は対象外＝満額。
+  // 国のCEV補助金（2026年度）。Teslaは¥127万（Tesla公式トップも「127万円の補助金対象」と明記・2026-09-14確認）。
+  // 税抜840万円以上は×0.8減額だがTesla各車は対象外＝満額。
   cev: { max: 1270000, high_value_threshold_excl_tax: 8400000, high_value_factor: 0.8 },
+
+  // 画面上部の告知バナー（★終わったら active:false に）
+  notice: {
+    active: true,
+    text: "【重要】国のCEV補助金（最大¥127万）は予算上限に達し次第終了。次世代自動車振興センターは2026/9/4に「申請受付終了は2026年12月上旬〜12月下旬目処」と公表しました。納期次第で対象外になる可能性があるため、注文前に最新の受付状況をご確認ください。"
+  },
 
   // ローン（0%金利キャンペーン前提。年数選択）
   finance: { apr: 0, years: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] },
@@ -37,15 +44,15 @@ const DATA = {
     delivery_deadline: "2026/7/31"
   },
 
-  // 車両（価格は変動・一部は推定。最新はTesla公式で要確認）
+  // 車両（2026-09-14 Tesla公式の注文ページ tesla.com/ja_jp/{model3,modely}/design で全価格を実地確認）
+  // ※Model Y パフォーマンスは日本の注文ページに無い（現在は選択不可）ため削除。Model 3 のパフォーマンスは現行。
   models: [
-    { id: "m3rwd", name: "Model 3 RWD",               price: 5313000, km_per_kwh: 6.5 },
-    { id: "m3lr",  name: "Model 3 Long Range AWD",     price: 6200000, km_per_kwh: 6.4 },
-    { id: "m3p",   name: "Model 3 Performance",        price: 7259000, km_per_kwh: 6.0 },
-    { id: "myrwd", name: "Model Y RWD",                price: 5587000, km_per_kwh: 6.3 },
-    { id: "mylr",  name: "Model Y Long Range AWD",     price: 6476000, km_per_kwh: 6.2 },
-    { id: "myp",   name: "Model Y Performance",        price: 6979000, km_per_kwh: 5.9 },
-    { id: "myl",   name: "Model Y L (3列6人乗り)",      price: 7490000, km_per_kwh: 5.8 }
+    { id: "m3rwd", name: "Model 3 Premium RWD",              price: 5313000, km_per_kwh: 6.5 },
+    { id: "m3lr",  name: "Model 3 Premium ロングレンジAWD",   price: 6219000, km_per_kwh: 6.4 },
+    { id: "m3p",   name: "Model 3 パフォーマンス AWD",         price: 7259000, km_per_kwh: 6.0 },
+    { id: "myrwd", name: "Model Y Premium RWD",              price: 5587000, km_per_kwh: 6.3 },
+    { id: "mylr",  name: "Model Y Premium ロングレンジAWD",   price: 6476000, km_per_kwh: 6.2 },
+    { id: "myl",   name: "Model Y L Premium AWD (3列6人乗り)", price: 7490000, km_per_kwh: 5.8 }
   ],
 
   // 自治体補助：subsidy＝都道府県レベルで概ね受けられる額（多くは0＝国のみ）。市区町村・条件はnoteに明記。
