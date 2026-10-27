@@ -174,6 +174,8 @@
   const $ = id => document.getElementById(id);
 
   DATA.models.forEach((m,i)=>{ const o=document.createElement("option"); o.value=i; o.textContent=m.name; $("model").appendChild(o); });
+  const today = (() => { const d = new Date(); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); })();
+  const REF_ON = !DATA.referral.paused_until || today >= DATA.referral.paused_until;
   DATA.prefectures.forEach((p,i)=>{ const o=document.createElement("option"); o.value=i; o.textContent=p.name; $("pref").appendChild(o); });
   DATA.finance.years.forEach(y=>{ const o=document.createElement("option"); o.value=y; o.textContent=y+"年"; if(y===5)o.selected=true; $("years").appendChild(o); });
 
@@ -190,7 +192,7 @@
     const exclTax = m.price / 1.1;
     const cev = exclTax >= DATA.cev.high_value_threshold_excl_tax
       ? Math.round(DATA.cev.max * DATA.cev.high_value_factor) : DATA.cev.max;
-    const ref = DATA.referral.discount;
+    const ref = REF_ON ? DATA.referral.discount : 0;
     const net = Math.max(0, m.price - cev - p.subsidy - ref);
 
     // 月々
@@ -252,7 +254,21 @@
       : yen(fuelSC) + "/年";
   }
 
-  $("cta").href = DATA.referral.link;
+  if (REF_ON) {
+    $("cta").href = DATA.referral.link;
+  } else {
+    // 作者の紹介が今年の上限に到達: 割引の行と注文ボタンを外し、理由を出す（リンク先で割引が出ないため）
+    $("bRef").parentElement.style.display = "none";
+    const box = document.createElement("div");
+    box.className = "card";
+    const p = document.createElement("p");
+    p.className = "note";
+    p.textContent = "※作者（@daisuketesla）の紹介コードは" + (+DATA.referral.paused_until.slice(0, 4) - 1)
+      + "年の上限に達したため、紹介割引（¥" + DATA.referral.discount.toLocaleString() + "）は計算に含めていません。"
+      + DATA.referral.paused_until.slice(0, 4) + "年1月に再開予定です。";
+    box.appendChild(p);
+    $("cta").replaceWith(box);
+  }
   $("disc").textContent =
     "※本ツールの金額は概算です。価格・補助金・金利・燃料費・税金・車検費は変動し、地域や個別条件で実額は異なります。"
     + "実際の金額はTesla公式の見積もりと各自治体・窓口で必ずご確認ください。データ最終更新: "
