@@ -256,6 +256,9 @@
 
   if (REF_ON) {
     $("cta").href = DATA.referral.link;
+    if (DATA.referral.owner_note) {  // リンクの持ち主が作者本人でないときは明記（透明性）
+      $("cta").querySelector("small").textContent = DATA.referral.owner_note + "・Tesla公式（ts.la）へ・注文時に適用、後付け不可";
+    }
   } else {
     // 作者の紹介が今年の上限に到達: 割引の行と注文ボタンを外し、理由を出す（リンク先で割引が出ないため）
     $("bRef").parentElement.style.display = "none";
